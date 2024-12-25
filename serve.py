@@ -1,6 +1,7 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from evento_online import EventoOnline
 from evento import Evento
+import json
 
 ev_online = EventoOnline("Live de Python")
 ev2_online = EventoOnline("Live de Javascript")
@@ -14,7 +15,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "text/html;charset=utf-8")
             self.end_headers()
-            
+
             data = f"""
             <html>
                 <head>
@@ -26,14 +27,14 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 </body>
             </html>
             """.encode()
-            
+
             self.wfile.write(data)
-       
+
         elif self.path == "/eventos":
             self.send_response(200)
             self.send_header("Content-type", "text/html;charset=utf-8")
             self.end_headers()
-           
+
             # Definindo o estilo CSS
             stylesheet = """
             <style>
@@ -54,7 +55,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 }
             </style>
             """
-           
+
             # Construindo o HTML dos eventos
             eventos_html = ""
             for ev in eventos:
@@ -65,7 +66,7 @@ class SimpleHandler(BaseHTTPRequestHandler):
                     <td>{ev.local}</td>
                 </tr>
                 """
-            
+
             # HTML final com estilo e tabela
             data = f"""
             <html>
@@ -86,6 +87,22 @@ class SimpleHandler(BaseHTTPRequestHandler):
                 </body>
             </html>
             """.encode()
+            self.wfile.write(data)
+
+        elif self.path == "/api/eventos":
+            self.send_response(200)
+            self.send_header("Content-type", "application/json;charset=utf-8")
+            self.end_headers()
+
+            lista_dict_eventos = []
+            for ev in eventos:
+                lista_dict_eventos.append({
+                    "id": ev.id,
+                    "nome": ev.nome,
+                    "local": ev.local
+                })
+
+            data = json.dumps(lista_dict_eventos).encode()
             self.wfile.write(data)
 
 # Configuração do servidor
