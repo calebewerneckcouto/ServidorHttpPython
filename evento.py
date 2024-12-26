@@ -16,12 +16,12 @@ class Evento:
         print(f"Local do evento:",{self.local})
         print("------------------------------")
         
-    def to_json(self):
-        return json.dumps({
-            "id": self.id,
-            "local":self.local,
-            "nome":self.nome,
-        })
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'local': self.local
+        }
     
     @staticmethod
     def calcula_limite_pessoas_area(area):

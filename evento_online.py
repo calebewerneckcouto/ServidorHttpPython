@@ -11,3 +11,9 @@ class EventoOnline(Evento):
         print(f"Link para acessar o evento:",{self.local})
         print("------------------------------")        
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'local': self.local
+        }
