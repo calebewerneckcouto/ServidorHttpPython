@@ -90,8 +90,7 @@ def criar_eventos():
     #Validação
     if not nome:
          abort(400," 'Nome'  deve ser informado")
-    elif not local:
-        abort(400," 'local' deve ser informado")     
+        
     
     if local:
         evento = Evento(nome=nome,local=local)
@@ -104,6 +103,52 @@ def criar_eventos():
         "id": evento.id,
         "url":f"/api/eventos/{evento.id}/"
     }
+    
+    
+    
+@app.route("/api/eventos/<int:id>", methods=["PUT"])
+def atualizar_eventos(id):
+    data = request.get_json()
+    nome = data.get("nome")
+    local = data.get("local")
+
+    # Validação
+    if not nome:
+        abort(400, "'Nome' deve ser informado")
+    if not local:
+        abort(400, "'Local' deve ser informado")
+
+    # Recupera o evento ou retorna 404
+    ev = get_evento_or_404(id)
+    if ev is None:
+        abort(404, f"Evento com id {id} não encontrado.")
+
+    # Atualiza os atributos do objeto
+    ev.nome = nome
+    ev.local = local
+
+    return jsonify(ev.to_dict())
+
+
+
+@app.route("/api/eventos/<int:id>", methods=["PATCH"])
+def atualizar_eventos_parcialmente(id):
+    ev = get_evento_or_404(id)
+    data = request.get_json()
+    #quero editar o nome
+    if "nome" in data.keys():
+        nome = data.get("nome")
+        if not nome:
+            abort(400, "'Nome' deve ser informado")
+        ev.nome = nome    
+    #quero editar o local
+    if "local" in data.keys():
+        local = data.get("local")
+        if not local:
+            abort(400, "'Local' deve ser informado")        
+        ev.local=local 
+    
+    return jsonify(ev.to_dict())
 
 if __name__ == "__main__":
     app.run(debug=True)
